@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ProtoxOS Versions</title>
+</head>
+<body>
+<h1>ProtoxOS Versions</h1>
+<ul id="versionsList"></ul>
+
+<script>
+// Function to fetch data from GitHub API
+async function fetchData(url) {
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    return response.json();
+  } catch (error) {
+    console.error('There was a problem with the fetch operation:', error);
+    return null;
+  }
+}
+
+// Function to display versions as redirect links
+async function displayVersions() {
+  const baseUrl = 'https://api.github.com/repos/koo1140/ProtoxOS/contents/versions';
+  const versionsUrl = baseUrl + '?ref=main';
+
+  const versions = await fetchData(versionsUrl);
+
+  if (versions && Array.isArray(versions)) {
+    const versionsList = document.getElementById('versionsList');
+    versions.forEach(version => {
+      const versionName = version.name;
+      const versionLink = version.html_url;
+      const listItem = document.createElement('li');
+      const link = document.createElement('a');
+      link.href = versionLink;
+      link.textContent = versionName;
+      listItem.appendChild(link);
+      versionsList.appendChild(listItem);
+    });
+  } else {
+    console.error('Failed to fetch versions from GitHub API.');
+  }
+}
+
+// Call the function to display versions
+displayVersions();
+</script>
+</body>
+</html>
